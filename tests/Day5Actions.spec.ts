@@ -31,11 +31,46 @@ test.describe("Data entry validation",()=>{
         //get by Role and check the radio button
         await page.getByRole('radio', { name: 'Male', exact: true }).check();
         await page.locator("div[class='radio-group'] label:nth-child(1)").click();
+        // Scroll down by 500 pixels
+await page.evaluate(() => {
+  window.scrollBy(0, 500);
+});
                  await expect(page.locator("div[class='radio-group'] label:nth-child(1)")).toBeChecked();
+                   
+                 await expect(page.getByRole('radio', { name: 'Female', exact: true })).not.toBeChecked();
                  //get by Role and check the checkbox
-                 await page.getByRole('checkbox', { name: 'Mon', exact: true }).check();
-         await page.locator("label[for='mon']").click();
+                 //await page.getByRole('checkbox', { name: 'Mon', exact: true }).check();
+                 //await page.getByRole('checkbox', { name: 'Mon', exact: true }).click();
+                 await expect(page.getByRole('checkbox', { name: 'Mon', exact: true })).not.toBeChecked();
+                 await page.getByLabel('Mon',{ exact: true }).click();
+                 await expect(page.getByRole('checkbox', { name: 'Mon', exact: true })).toBeChecked();
+               // to check multiple checkboxes using a loop
+                 const labels = [
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+  'Sun' 
+];
+
+for (const label of labels) {
+  await page.getByLabel(label).check();
+}
+
+//to uncheck multiple checkboxes using a loop
+for (const label of labels) {
+    if (label === 'Wed' || label === 'Fri') {
+      continue; // Skip unchecking 'Wed' and 'Fri'
+    }
+    if (await page.getByLabel(label).isChecked()) {
+  await page.getByLabel(label).uncheck();
+  await expect(page.getByLabel(label)).not.toBeChecked();
+}
+}
+         //await page.locator("label[for='mon']").click();
        await page.locator("form[id='dataEntryForm'] button[type='submit']").click();
+       
       
          
      });
